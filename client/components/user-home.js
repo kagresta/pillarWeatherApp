@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getWeather} from '../store/openWeather.js'
+import {getWeatherCity, getWeatherCoords} from '../store/openWeather.js'
 /**
  * COMPONENT
  */
@@ -8,18 +8,63 @@ import {getWeather} from '../store/openWeather.js'
 class UserHome extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      cityState: '',
+      lat: '',
+      long: ''
+    }
+    this.handleChange = this.handleChange.bind(this)
+    this.handleSubmitCoords = this.handleSubmitCoords.bind(this)
+    this.handleSubmitCityState = this.handleSubmitCityState.bind(this)
+  }
+  componentDidMount() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(displayLocationInfo)
+    }
+
+    function displayLocationInfo(position) {
+      const lng = position.coords.longitude
+      const lat = position.coords.latitude
+
+      console.log(`longitude: ${lng} | latitude: ${lat}`)
+    }
+  }
+  handleChange(event) {
+    this.setState({[event.target.name]: event.target.value})
   }
 
-  componentDidMount() {}
+  async handleSubmitCoords(event) {
+    event.preventDefault()
+    await this.props.getWeatherCoords(this.state.lat, this.state.long)
+    this.setState({
+      cityState: '',
+      lat: '',
+      long: ''
+    })
+    this.props.history.push('/display')
+  }
+
+  async handleSubmitCityState(event) {
+    event.preventDefault()
+    await this.props.getWeatherCity(this.state.cityState)
+    this.setState({
+      cityState: '',
+      lat: '',
+      long: ''
+    })
+    this.props.history.push('/display')
+  }
 
   render() {
     return (
       <div className="container inputForm">
         <div className="input-group mb-3 inputBox">
           <input
+            onChange={this.handleChange}
             type="text"
             className="form-control"
             placeholder="City, State"
+            name="cityState"
             aria-label="Recipient's username"
             aria-describedby="button-addon2"
           />
@@ -27,6 +72,7 @@ class UserHome extends Component {
             className="btn btn-outline-secondary"
             type="button"
             id="button-addon2"
+            onClick={this.handleSubmitCityState}
           >
             Submit
           </button>
@@ -34,13 +80,17 @@ class UserHome extends Component {
 
         <div className="input-group mb-3 inputBox">
           <input
+            onChange={this.handleChange}
             type="text"
+            name="lat"
             aria-label="Latitude"
             className="form-control"
             placeholder="Latitude"
           />
           <input
+            onChange={this.handleChange}
             type="text"
+            name="long"
             aria-label="Longitude"
             className="form-control"
             placeholder="Longitude"
@@ -49,6 +99,7 @@ class UserHome extends Component {
             className="btn btn-outline-secondary"
             type="button"
             id="button-addon2"
+            onClick={this.handleSubmitCoords}
           >
             Submit
           </button>
@@ -61,12 +112,18 @@ class UserHome extends Component {
 /**
  * CONTAINER
  */
+
+const mapState = state => ({
+  city: state.openWeather.city,
+  weather: state.openWeather.list
+})
 const mapDispatch = dispatch => ({
-  getWeather: cityId => dispatch(getWeather(cityId))
+  getWeatherCity: cityId => dispatch(getWeatherCity(cityId)),
+  getWeatherCoords: (lat, long) => dispatch(getWeatherCoords(lat, long))
 })
 
 export default connect(
-  null,
+  mapState,
   mapDispatch
 )(UserHome)
 
