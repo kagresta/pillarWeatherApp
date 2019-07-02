@@ -18,11 +18,11 @@ class UserHome extends Component {
     this.handleSubmitCityState = this.handleSubmitCityState.bind(this)
   }
   async componentDidMount() {
-    if (navigator.geolocation && !window.localStorage.lng) {
+    if (navigator.geolocation && !window.localStorage.long) {
       await navigator.geolocation.getCurrentPosition(displayLocationInfo)
       await this.props.getWeatherCoords(
-        Math.floor(localStorage.lat),
-        Math.floor(localStorage.lng)
+        Math.round(localStorage.lat),
+        Math.round(localStorage.lng)
       )
       this.props.history.push('/display')
     }

@@ -43,6 +43,7 @@ class Temperature extends Component {
   async componentDidMount() {
     const {weather} = this.props
     await this.populateData()
+    console.log(weather, 'weather')
   }
   populateData() {
     if (this.props.weather.length) {

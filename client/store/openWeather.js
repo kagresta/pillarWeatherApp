@@ -8,9 +8,7 @@ const GET_WEATHER = 'GET_WEATHER'
 /**
  * INITIAL STATE
  */
-const defaultWeather = {
-  city: null
-}
+const defaultWeather = {}
 
 /**
  * ACTION CREATORS
@@ -23,7 +21,6 @@ const gotWeather = weather => ({type: GET_WEATHER, weather})
 export const getWeatherCoords = (lat, long) => async dispatch => {
   let res
   try {
-    console.log('stuff is happening', lat, long)
     res = await axios.get(
       `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&units=imperial&appid=9416173e9daea94ade7368cb7ad9d1a7`
     )

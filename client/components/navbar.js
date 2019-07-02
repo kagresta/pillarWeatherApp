@@ -8,7 +8,7 @@ const Navbar = () => (
     <h1>Weather App</h1>
     <nav>
       <div>
-        <Link to="/">Home</Link>
+        <Link to="/">Get forecast for a different location</Link>
       </div>
     </nav>
     <hr />
