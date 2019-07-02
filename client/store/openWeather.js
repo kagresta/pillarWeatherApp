@@ -51,7 +51,10 @@ export const getWeatherCity = cityId => async dispatch => {
 export default function(state = defaultWeather, action) {
   switch (action.type) {
     case GET_WEATHER:
-      return action.weather.data
+      let sanitized = action.weather.data.list.filter(elem => {
+        return elem.dt_txt.slice(11, elem.dt_txt.length) === '00:00:00'
+      })
+      return sanitized
 
     default:
       return state

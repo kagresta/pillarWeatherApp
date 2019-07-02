@@ -41,20 +41,14 @@ class Humidity extends Component {
     this.populateData = this.populateData.bind(this)
   }
   async componentDidMount() {
-    const {weather} = this.props
     await this.populateData()
   }
   populateData() {
     if (this.props.weather.length) {
-      let sanitized = this.props.weather.filter(elem => {
-        return elem.dt_txt.slice(11, elem.dt_txt.length) === '00:00:00'
-      })
-
-      sanitized.forEach(elem => {
+      this.props.weather.forEach(elem => {
         data.labels.push(elem.dt_txt.slice(0, 10))
         data.datasets[0].data.push(elem.main.humidity)
       })
-      console.log(data.datasets[0].data)
       this.setState({data: data})
     }
   }
@@ -69,8 +63,7 @@ class Humidity extends Component {
 }
 
 const mapState = state => ({
-  city: state.openWeather.city,
-  weather: state.openWeather.list
+  weather: state.openWeather
 })
 
 export default connect(

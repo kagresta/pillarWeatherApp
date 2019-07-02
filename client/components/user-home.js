@@ -17,18 +17,25 @@ class UserHome extends Component {
     this.handleSubmitCoords = this.handleSubmitCoords.bind(this)
     this.handleSubmitCityState = this.handleSubmitCityState.bind(this)
   }
-  componentDidMount() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(displayLocationInfo)
+  async componentDidMount() {
+    if (navigator.geolocation && !window.localStorage.lng) {
+      await navigator.geolocation.getCurrentPosition(displayLocationInfo)
+      await this.props.getWeatherCoords(
+        Math.floor(localStorage.lat),
+        Math.floor(localStorage.lng)
+      )
+      this.props.history.push('/display')
     }
 
     function displayLocationInfo(position) {
       const lng = position.coords.longitude
       const lat = position.coords.latitude
-
+      window.localStorage.setItem('long', lng)
+      window.localStorage.setItem('lat', lat)
       console.log(`longitude: ${lng} | latitude: ${lat}`)
     }
   }
+
   handleChange(event) {
     this.setState({[event.target.name]: event.target.value})
   }
@@ -114,8 +121,7 @@ class UserHome extends Component {
  */
 
 const mapState = state => ({
-  city: state.openWeather.city,
-  weather: state.openWeather.list
+  weather: state.openWeather
 })
 const mapDispatch = dispatch => ({
   getWeatherCity: cityId => dispatch(getWeatherCity(cityId)),
